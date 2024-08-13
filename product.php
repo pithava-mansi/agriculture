@@ -47,7 +47,7 @@ include_once ('admin/controller/database/db.php');
             while ($row = mysqli_fetch_assoc($res)) {
                 ?>
                 <div class="col-lg-4 col-md-4 col-sm-12 ">
-                    <div class="card m-1 text-left p-1 ms-2 mb-3">
+                    <div class="card m-1 text-center p-1 ms-2 mb-3">
                         <p class="text-center mt-2">
                             <img src="admin/<?php echo $row['product_image'] ?>" height="160px" width="150px" alt=""
                                 srcset="">
@@ -57,7 +57,7 @@ include_once ('admin/controller/database/db.php');
                         </h5>
 
                         <h5>
-                            <?php echo '$' . $row["product_price"]; ?>
+                            <?php echo '₹' . $row["product_price"]; ?>
                         </h5>
 
                         <h5>

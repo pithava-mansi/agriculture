@@ -50,7 +50,10 @@
         </div>
         </div>
 
-        <!-- <p>&copy; <?php echo date("Y"); ?> Your Company. All Rights Reserved.</p> -->
+     
+    </footer>
+    <footer class="footer">
+    <p>&copy; <?php echo date("Y"); ?> Your Company. All Rights Reserved.</p>
     </footer>
 </body>
 
