@@ -66,9 +66,9 @@ session_start();
                             $total_price += $total_item_price;
                             echo "<tr>
                                 <td>" . htmlspecialchars($item["name"]) . "</td>
-                                <td>$" . htmlspecialchars($item["price"]) . "</td>
+                                <td>₹" . htmlspecialchars($item["price"]) . "</td>
                                 <td>" . htmlspecialchars($item["quantity"]) . "</td>
-                                <td>$" . htmlspecialchars($total_item_price) . "</td>
+                                <td>₹" . htmlspecialchars($total_item_price) . "</td>
                                 <td>
                                     <form method='POST' action=''>
                                         <input type='hidden' name='product_id' value='" . htmlspecialchars($product_id) . "'>
