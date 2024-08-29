@@ -26,6 +26,7 @@
     </style>
 </head>
 <body>
+<a href="javascript:history.back()" class="back-button">Back</a>
     <h1>Agricultural Products Overview</h1>
     <div class="section">
         <h2>1. Crops:</h2>
@@ -92,5 +93,6 @@
             <li><strong>Sustainability:</strong> Plays a role in sustainable practices and conservation efforts through organic farming and eco-friendly production methods.</li>
         </ul>
     </div>
+    <a href="javascript:history.back()" class="back-button">Back</a>
 </body>
 </html>
