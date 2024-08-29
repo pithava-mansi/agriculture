@@ -1,4 +1,4 @@
-
+<!-- 
 
 <?php
 session_start();
@@ -113,4 +113,4 @@ if(0==$_SESSION['ROLE']){
             include 'logout.php';
         }
         
-        ?>
+        ?> -->

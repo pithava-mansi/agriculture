@@ -19,8 +19,20 @@
                 <li class="nav-item">
                     <a class="nav-link " href="contact_us.php"> Contact us</a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link " href="product.php">Products</a>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                        data-bs-toggle="dropdown" aria-expanded="false">
+                        Products
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <?php
+                        $query = "SELECT * FROM categories";
+                        $result = mysqli_query($conn, $query);
+                        while ($row = mysqli_fetch_assoc($result)) {
+                            echo '<li><a class="dropdown-item" href="product.php?category=' . $row['category_name'] . '">' . $row['category_name'] . '</a></li>';
+                        }
+                        ?>
+                    </ul>
                 </li>
                 <li class="nav-item ">
                     <a class="nav-link " href="feedback.php">Feedback</a>

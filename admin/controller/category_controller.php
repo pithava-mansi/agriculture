@@ -1,74 +1,98 @@
-<?php 
-class products
-    {
-        public $db;  // Declare the property
+<?php
+// Assuming $conn is your database connection
+class CategoryController {
+    private $conn;
 
-        function __construct(){        
-            $conn=mysqli_connect('localhost','root','','Agro');
-            $this->db=$conn; //Initialize the property
-            if(mysqli_connect_error()){
-                echo 'failed to connect'.mysqli_connect_error();
-            }
-        }
-        function insert($category_name)
-        {
-            $sql  = "INSERT INTO `categories` (`category_name`) VALUES ('$category_name')";       
-            $res=mysqli_query($this->db,$sql);
-            return $res;
-        }
-        /*
-        function update($category_id,$category_name)
-        {
-            $sql = "UPDATE `categories` SET `category_name`='$category_name' WHERE `category_id`='$category_id'";
-            $res = mysqli_query($this->db, $sql);
-            return $res;
-        }*/
-        function delete($category_id)
-        {
-            $sql = "DELETE FROM `categories` WHERE `category_id`='$category_id'";
-            $res = mysqli_query($this->db, $sql);
-            return $res;
-        }
-        function view()
-        {
-                
-            $sql = "SELECT * FROM `categories`";
-            $res = mysqli_query($this->db,$sql);
-            return $res;
-        }
+    public function __construct($db) {
+        $this->conn = $db;
     }
-    $obj = new products();
+
+    public function addCategory($categoryName) {
+        // Check if category already exists
+        $query = "SELECT * FROM categories WHERE category_name = ?";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bind_param("s", $categoryName);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        if ($result->num_rows > 0) {
+            return false; // Category already exists
+        }
+
+        // Insert new category
+        $query = "INSERT INTO categories (category_name) VALUES (?)";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bind_param("s", $categoryName);
+        return $stmt->execute();
+    }
+
+    public function updateCategory($categoryId, $categoryName) {
+        // Check if category already exists
+        $query = "SELECT * FROM categories WHERE category_name = ? AND category_id != ?";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bind_param("si", $categoryName, $categoryId);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        if ($result->num_rows > 0) {
+            return false; // Category already exists with different ID
+        }
+
+        // Update category
+        $query = "UPDATE categories SET category_name = ? WHERE category_id = ?";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bind_param("si", $categoryName, $categoryId);
+        return $stmt->execute();
+    }
+
+    public function deleteCategory($categoryId) {
+        $query = "DELETE FROM categories WHERE category_id = ?";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bind_param("i", $categoryId);
+        return $stmt->execute();
+    }
+
+    public function viewCategories() {
+        $query = "SELECT * FROM categories";
+        return $this->conn->query($query);
+    }
+}
+
+// Create a connection and handle form submissions
+$conn = new mysqli('localhost', 'root', '', 'Agro');
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
+
+$categoryController = new CategoryController($conn);
+
+// Handle the form submission
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (isset($_POST['submit'])) {
-        $category_name=$_POST['category_name'];
-       
-        $result=$obj->insert($category_name);
-        
-        if ($result==true) {
-          header("Location:category.php");
-          die();
-        }else{
-          $errorMsg  = "You are not Registred..Please Try again";
-          echo $errorMsg;
-        }   
-    }/*
-    if (isset($_POST['update'])) {
-        $category_id = $_POST['category_id'];
-        $category_name = $_POST['category_name'];
-    
-        $res = $obj->update($category_id, $category_name);
-        if ($res) {
-            header("location:category.php");
+        $categoryName = $_POST['category_name'];
+        if ($categoryController->addCategory($categoryName)) {
+            header("Location: category.php");
+            exit();
         } else {
-            echo "alert('data not updated successfully')";
+            $error_message = "Category name already exists. Please choose a different name.";
         }
-    } 
-    else*/if (isset($_POST['delete'])) {
-        $category_id=$_POST['category_id'];
-        $res = $obj->delete($category_id);
-        if ($res) {
-            header("location:category.php");
+    } elseif (isset($_POST['update'])) {
+        $categoryId = $_POST['category_id'];
+        $categoryName = $_POST['category_name'];
+        if ($categoryController->updateCategory($categoryId, $categoryName)) {
+            header("Location: category.php");
+            exit();
         } else {
-            echo "not deleted";
+            $error_message = "Category name already exists or error updating category.";
+        }
+    } elseif (isset($_POST['delete'])) {
+        $categoryId = $_POST['category_id'];
+        if ($categoryController->deleteCategory($categoryId)) {
+            header("Location: category.php");
+            exit();
+        } else {
+            $error_message = "Error deleting category.";
         }
     }
+}
 ?>

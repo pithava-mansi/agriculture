@@ -1,8 +1,7 @@
 <?php
-class feedback
+class FeedbackController
 {
-    public $db;  // Declare the property
-
+    private $db;
     function __construct()
     {
         $conn = mysqli_connect('localhost', 'root', '', 'Agro');
@@ -11,37 +10,22 @@ class feedback
             echo 'failed to connect' . mysqli_connect_error();
         }
     }
-    function insert($name, $email, $message)
+    public function feedback($name,$email,$message)
     {
-        $sql = "INSERT INTO `feedback`(`name`,`email`,`message`) 
-            VALUES ('$name','$email','$message')";
+        $query = "SELECT name, email, message FROM feedback WHERE user_id = " . $_SESSION['ID'];
+        $result = mysqli_query($this->db, $query);
 
-        $res = mysqli_query($this->db, $sql);
-        return $res;
+        if (!$result) {
+            die("Query Failed: " . mysqli_error($this->db));
+        }
+        return $result;
     }
-    function view()
+    public function viewfeedback()
     {
-
-        $sql = "SELECT * FROM `feedback`";
-        $res = mysqli_query($this->db, $sql);
-        return $res;
+        $query = "SELECT * FROM feedback";
+        $result = mysqli_query($this->db, $query);
+        return $result;
     }
 }
-$obj = new feedback();
-if (isset($_POST['submit'])) {
-
-    $name = $_POST['name'];
-    $email = $_POST['email'];
-    $message = $_POST['message'];
-    $result = $obj->insert($name, $email, $message);
-    if ($result == true) {
-        // echo "<script>alert('thanks for submit data');</script>";
-         header("Location:dashboard.php");
-        die();
-    } else {
-        $errorMsg = "You are not Registred..Please Try again";
-        echo $errorMsg;
-    }
-}
-
+$obj=new FeedbackController();
 ?>

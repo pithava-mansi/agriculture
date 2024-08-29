@@ -2,7 +2,7 @@
 
 body {
 
-    background-image: url(images/back.avif);
+    background-image: url(images/back.avif); 
     background-size: cover;
     font-family: 'Arial', sans-serif;
 }
@@ -76,8 +76,8 @@ input:focus {
     width: 30%;
 }
 .menu-logo{
-    height: 25%;
-    width: 2%;
+    height: 30%;
+    width: 30%;
     mix-blend-mode: multiply;
 }
 .img{

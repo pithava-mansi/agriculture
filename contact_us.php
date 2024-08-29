@@ -1,4 +1,5 @@
 <?php
+
 session_start();
 
 // Ensure 'ROLE' is set in the session before accessing it
@@ -11,6 +12,7 @@ if (isset($_SESSION['ROLE'])) {
 // Include other necessary files and handle other logic
 include 'admin/error.php';
 include_once('admin/controller/database/db.php');
+include 'breadcrumb.php';
 ?>
 
 <!DOCTYPE html>
@@ -32,6 +34,7 @@ include_once('admin/controller/database/db.php');
             include 'menu.php';
         }
     ?>
+    
     <div class="row  d-flex  justify-content-center  mt-3 mb-3">
         <div class="row">
             <div class="col-md-6 offset-md-3">

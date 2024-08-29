@@ -15,14 +15,14 @@
     $sql = "CREATE TABLE users 
     (
         id INT(2) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-        fname VARCHAR(30) NOT NULL,
-        lname VARCHAR(30) NOT NULL,
-        email VARCHAR(255) NOT NULL,
-        username VARCHAR(15) NOT NULL,
-        pass VARCHAR(255) NOT NULL,
-        confirm_password VARCHAR(255) NOT NULL,
-        mobile VARCHAR(10) NOT NULL,
-        address VARCHAR(300) NOT NULL,
+        fname VARCHAR NOT NULL,
+        lname VARCHAR NOT NULL,
+        email VARCHAR NOT NULL,
+        username VARCHAR NOT NULL,
+        pass VARCHAR NOT NULL,
+        confirm_password VARCHAR NOT NULL,
+        mobile VARCHAR NOT NULL,
+        address VARCHAR NOT NULL,
         user_role INT(1) NOT NULL DEFAULT '2'
     )";
     

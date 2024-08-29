@@ -51,7 +51,7 @@ if(2==$_SESSION['ROLE']){
                     </h5>
 
                     <h5>
-                        <?php echo '₹' . $row["product_price"]; ?>
+                        <?php echo '$' . $row["product_price"]; ?>
                     </h5>
 
                     <h5>

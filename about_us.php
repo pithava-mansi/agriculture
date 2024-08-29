@@ -1,17 +1,19 @@
 <?php
+
 session_start();
 
 // Ensure 'ROLE' is set in the session before accessing it
 if (isset($_SESSION['ROLE'])) {
     $role = $_SESSION['ROLE'];
-   // echo $role;
 } else {
     $role = null; // Or set a default value, or handle the case when the role is not set
-    //echo $role;
 }
+
+// Include other necessary files and handle other logic
 include 'admin/error.php';
-?>
-<!DOCTYPE html>
+include_once('admin/controller/database/db.php');
+include 'breadcrumb.php';
+?><!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -23,6 +25,7 @@ include 'admin/error.php';
 </head>
 
 <body>
+
 <?php
         // Check the user's role and include the appropriate menu
         if ($role == 2) {
@@ -35,6 +38,8 @@ include 'admin/error.php';
         <div class="row">
             <div class="col-md-6 offset-md-3">
                 <div class="card mb-2">
+   
+
                     <div class="card-header text text-dark text-center">
                         <h3>About Us</h3>
                     </div>
@@ -50,6 +55,7 @@ include 'admin/error.php';
             </div>
         </div>
     </div>
+   
     <?php include 'footer.php';?>
     <?php include 'js.php';  ?>
 </body>

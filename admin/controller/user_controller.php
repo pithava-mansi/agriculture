@@ -69,18 +69,7 @@ if (isset($_POST['submit'])) {
     }
 }
 
-/*
-if (isset($_POST['update'])) {
-    $id = $_POST['user_id'];
-    $course = $_POST[''];
-
-    $res = $obj->update();
-    if ($res) {
-        header("location:users.php");
-    } else {
-        echo "alert('data not updated successfully')";
-    }
-} */ elseif (isset($_POST['delete'])) {
+ elseif (isset($_POST['delete'])) {
     $id = $_POST['user_id'];
     $res = $obj->delete($id);
     if ($res) {

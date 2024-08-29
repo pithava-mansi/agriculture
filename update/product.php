@@ -1,4 +1,3 @@
-<?php include 'breadcrumb.php'; ?>
 <?php
 session_start();
 
@@ -8,6 +7,8 @@ if (isset($_SESSION['ROLE'])) {
 } else {
     $role = null; // Or set a default value, or handle the case when the role is not set
 }
+
+// Include other necessary files and handle other logic
 include 'admin/error.php';
 include_once ('admin/controller/database/db.php');
 ?>
@@ -17,34 +18,28 @@ include_once ('admin/controller/database/db.php');
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Agrimart</title>
+    <title>Product</title>
     <?php include 'css.php'; ?>
+
 </head>
 
 <body>
-
     <?php
     // Check the user's role and include the appropriate menu
-    if ($role == 2) {
+    if (isset($role) && $role == 2) {
         include 'menu2.php';
     } else {
         include 'menu.php';
     }
     ?>
 
-
     <div class="container ">
-        <div class="row mt-1">
-            <img src="asset/css/images/intro.jpeg" alt="" height="500px" class="intro-img mt-3">
-        </div>
-
         <div class="card mt-3 p-2 mb-3 text text-center">
             <div class="card-header text text-dark text-center">
                 <h3>Popular Products</h3>
             </div>
         </div>
         <div class="row mt-1">
-
             <?php
             $sql = "SELECT * FROM products ";
             $res = mysqli_query($conn, $sql);
@@ -68,10 +63,12 @@ include_once ('admin/controller/database/db.php');
                         <h5>
                             <?php echo $row["created_at"]; ?>
                         </h5>
+                        
+
                         <?php
                         // Check the user's role and include the appropriate menu
-                        if ($role == 2) {
-                          ?>
+                        if (isset($role) && $role == 2) {
+                            ?>
                             <form class="text-center" method="POST" action="addtocart.php">
                                 <input type="hidden" name="role" value="<?php echo $role; ?>">
                                 <input type="hidden" name="product_id" value="<?php echo $row['product_id']; ?>">
@@ -84,25 +81,22 @@ include_once ('admin/controller/database/db.php');
                             </form>
                             <?php
 
-                        } else {
-                           
-                            ?>
+                        } else { ?>
+
                             <form class="text-center" method="POST" action="login.php">
-                            <input type="hidden" name="role" value="<?php echo $role; ?>">
-                            <input type="hidden" name="product_id" value="<?php echo $row['product_id']; ?>">
-                            <input type="hidden" name="product_name" value="<?php echo $row['product_name']; ?>">
-                            <input type="hidden" name="product_price" value="<?php echo $row['product_price']; ?>">
-                            <button class="btn m-3" type="submit" name="addtocart">Add to Cart</button>
-                            <button type="button" value="<?php echo $row['product_id'] ?>" class="btn btn-info"
-                                data-bs-target="#display-<?php echo $row['product_id'] ?>" data-bs-toggle="modal">Details
-                            </button>
-                        </form>
-                       
-                       <?php
-                        } 
+                                <input type="hidden" name="role" value="<?php echo $role; ?>">
+                                <input type="hidden" name="product_id" value="<?php echo $row['product_id']; ?>">
+                                <input type="hidden" name="product_name" value="<?php echo $row['product_name']; ?>">
+                                <input type="hidden" name="product_price" value="<?php echo $row['product_price']; ?>">
+                                <button class="btn m-3" type="submit" name="addtocart">Add to Cart</button>
+                                <button type="button" value="<?php echo $row['product_id'] ?>" class="btn btn-info"
+                                    data-bs-target="#display-<?php echo $row['product_id'] ?>" data-bs-toggle="modal">Details
+                                </button>
+                            </form>
+                            <?php
+
+                        }
                         ?>
-
-
 
                     </div>
                 </div>
@@ -150,7 +144,10 @@ include_once ('admin/controller/database/db.php');
                                         <div class="modal-footer">
                                             <button type="button" class="btn btn-secondary text-dark"
                                                 data-bs-dismiss="modal">Buy</button>
-                                            <form method="POST" action="addtocart.php" class="text-center">
+                                            <?php
+                                            if (isset($role) && $role == 2) {
+                                                ?>
+                                                <form method="POST" action="addtocart.php" class="text-center">
                                                 <input type="hidden" name="role" value="<?php echo $role; ?>">
                                                 <input type="hidden" name="product_id"
                                                     value="<?php echo $row['product_id']; ?>">
@@ -158,11 +155,29 @@ include_once ('admin/controller/database/db.php');
                                                     value="<?php echo $row['product_name']; ?>">
                                                 <input type="hidden" name="product_price"
                                                     value="<?php echo $row['product_price']; ?>">
-                                                <button class="btn m-3" type="button" name="addtocart"
-                                                    data-bs-dismiss="modal" value="<?php echo $row["product_id"]; ?>"
-                                                    onclick="handleAddToCart(this)">addtocart</button>
+                                                <button class="btn m-3" type="submit" name="addtocart"
+                                                    data-bs-dismiss="modal">Add to Cart</button>
                                             </form>
+                                            <?php
 
+                                            } else {?>
+                                                <form method="POST" action="login.php" class="text-center">
+                                                <input type="hidden" name="role" value="<?php echo $role; ?>">
+                                                <input type="hidden" name="product_id"
+                                                    value="<?php echo $row['product_id']; ?>">
+                                                <input type="hidden" name="product_name"
+                                                    value="<?php echo $row['product_name']; ?>">
+                                                <input type="hidden" name="product_price"
+                                                    value="<?php echo $row['product_price']; ?>">
+                                                <button class="btn m-3" type="submit" name="addtocart"
+                                                    data-bs-dismiss="modal">Add to Cart</button>
+                                            </form>
+                                            <?php
+
+                                               
+                                            }
+                                            ?>
+                                            
                                             <button type="button" class="btn btn-secondary text-dark"
                                                 data-bs-dismiss="modal">Close</button>
                                         </div>
@@ -178,21 +193,6 @@ include_once ('admin/controller/database/db.php');
     </div>
     <?php include 'footer.php'; ?>
     <?php include 'js.php'; ?>
-
-    <script>
-        function handleAddToCart(button) {
-            var role = button.form.role.value;
-            var productId = button.form.product_id.value;
-
-            if (role) {
-                // If the user is logged in, redirect to addtocart page
-                window.location.href = 'addtocart.php?product_id=' + productId;
-            } else {
-                // If the user is not logged in, redirect to the login page
-                window.location.href = 'login.php';
-            }
-        }
-    </script>
 </body>
 
 </html>

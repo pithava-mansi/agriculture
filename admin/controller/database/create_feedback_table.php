@@ -13,11 +13,15 @@ if (!$conn) {
 
 //sql to create feedback table
 $sql = "CREATE TABLE feedback (
-        name VARCHAR(255)NOT NULL,
-        email VARCHAR(255)NOT NULL,
-        message VARCHAR(255)NOT NULL
+    user_id INT(2) UNSIGNED AUTO_INCREMENT,
+    name VARCHAR(255) NOT NULL,
+    email VARCHAR(255) NOT NULL,
+    message TEXT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+)";
         
-    )";
+
 if (mysqli_query($conn, $sql)) {
     echo "Table created successfully";
 } else {
