@@ -1,5 +1,3 @@
-
-
 <?php
 session_start();
 include 'controller/database/db.php'; // Database connection
@@ -21,6 +19,7 @@ $totalCategories = $result->fetch_assoc()['total_categories'];
 ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -75,42 +74,42 @@ $totalCategories = $result->fetch_assoc()['total_categories'];
         }
     </style>
 </head>
-<body>
-    <?php include 'menu.php'; // Include navigation menu ?>
-    <?php 
-//include 'error.php';
 
-// Include database connection file
-include_once('controller/database/db.php');
-if (!isset($_SESSION['ID'])) {
-include 'logout.php';
-	exit();
-}
-if(0==$_SESSION['ROLE']){
-?>
-    <div class="container mt-5">
-        <div class="row">
-            <div class="col-lg-12">
-                <div class="dashboard-card">
-                    <h3>Welcome to the Admin Dashboard</h3>
-                    <p>Total Users: <?php echo htmlspecialchars($totalUsers); ?></p>
-                    <p>Total Categories: <?php echo htmlspecialchars($totalCategories); ?></p>
-                    <div>
-                        <a href="category.php" class="btn btn-primary">Manage Categories</a>
-                        <a href="user_management.php" class="btn btn-primary">Manage Users</a>
-                        <a href="analytics.php" class="btn btn-primary">View Analytics</a>
-                       
+<body>
+    <?php include 'menu.php'; ?>
+    <?php
+    
+    include_once('controller/database/db.php');
+    if (!isset($_SESSION['ID'])) {
+        include 'logout.php';
+        exit();
+    }
+    if (0 == $_SESSION['ROLE']) {
+        ?>
+        <div class="container mt-5">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="dashboard-card">
+                        <h3>Welcome to the Admin Dashboard</h3>
+                        <p>Total Users: <?php echo htmlspecialchars($totalUsers); ?></p>
+                        <p>Total Categories: <?php echo htmlspecialchars($totalCategories); ?></p>
+                        <div>
+                            <a href="category.php" class="btn btn-primary">Manage Categories</a>
+                            <a href="user_management.php" class="btn btn-primary">Manage Users</a>
+                            <a href="analytics.php" class="btn btn-primary">View Analytics</a>
+
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <?php include 'js.php'; // Include JavaScript files ?>
-</body>
-</html>
-<?php }else{
-            include 'logout.php';
-        }
-        
-        ?>
+        <?php include 'js.php'; // Include JavaScript files ?>
+    </body>
+
+    </html>
+<?php } else {
+        include 'logout.php';
+    }
+
+    ?>

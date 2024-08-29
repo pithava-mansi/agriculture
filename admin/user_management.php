@@ -13,40 +13,34 @@ if (!$conn) {
     die("Connection failed: " . mysqli_connect_error());
 }
 
+$role = isset($_SESSION['ROLE']) ? $_SESSION['ROLE'] : null;
+
 // Handle user actions
-if (isset($_POST['action'])) {
-    $action = $_POST['action'];
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $action = isset($_POST['user_id']) && !empty($_POST['user_id']) ? 'edit' : 'add';
+    $userId = $_POST['user_id'] ?? null;
+    $username = $_POST['username'];
+    $email = $_POST['email'];
+    $password = isset($_POST['pass']) ? password_hash($_POST['pass'], PASSWORD_BCRYPT) : null;
 
     if ($action == 'add') {
-        // Add user
-        $username = $_POST['username'];
-        $email = $_POST['email'];
-        $password = password_hash($_POST['password'], PASSWORD_BCRYPT);
+        $stmt = mysqli_prepare($conn, "INSERT INTO users (username, email, pass) VALUES (?, ?, ?)");
+        mysqli_stmt_bind_param($stmt, "sss", $username, $email, $password);
+    } else {
+        if (isset($_POST['delete'])) {
+            $stmt = mysqli_prepare($conn, "DELETE FROM users WHERE id = ?");
+            mysqli_stmt_bind_param($stmt, "i", $userId);
+        } else {
+            $stmt = mysqli_prepare($conn, "UPDATE users SET username = ?, email = ? WHERE id = ?");
+            mysqli_stmt_bind_param($stmt, "ssi", $username, $email, $userId);
+        }
+    }
 
-        $stmt = $conn->prepare("INSERT INTO users (username, email, password) VALUES (?, ?, ?)");
-        $stmt->bind_param("sss", $username, $email, $password);
-        $stmt->execute();
-        $stmt->close();
-
-    } elseif ($action == 'edit') {
-        // Edit user
-        $userId = $_POST['user_id'];
-        $username = $_POST['username'];
-        $email = $_POST['email'];
-
-        $stmt = $conn->prepare("UPDATE users SET username = ?, email = ? WHERE id = ?");
-        $stmt->bind_param("ssi", $username, $email, $userId);
-        $stmt->execute();
-        $stmt->close();
-
-    } elseif ($action == 'delete') {
-        // Delete user
-        $userId = $_POST['user_id'];
-
-        $stmt = $conn->prepare("DELETE FROM users WHERE id = ?");
-        $stmt->bind_param("i", $userId);
-        $stmt->execute();
-        $stmt->close();
+    if ($stmt) {
+        mysqli_stmt_execute($stmt);
+        mysqli_stmt_close($stmt);
+    } else {
+        echo "Error preparing statement: " . mysqli_error($conn);
     }
 }
 
@@ -56,6 +50,15 @@ $users = mysqli_fetch_all($result, MYSQLI_ASSOC);
 
 mysqli_close($conn);
 ?>
+<?php 
+include 'error.php';
+session_start();
+include_once('controller/database/db.php');
+if (!isset($_SESSION['ID'])) {
+    include 'logout.php';
+    exit();
+}
+?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -63,6 +66,7 @@ mysqli_close($conn);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>User Management</title>
+    <?php include 'css.php'; ?>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -72,10 +76,6 @@ mysqli_close($conn);
             display: flex;
             flex-direction: column;
             align-items: center;
-        }
-
-        h1 {
-            color: #333;
         }
 
         .container {
@@ -90,11 +90,6 @@ mysqli_close($conn);
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             margin-bottom: 20px;
             padding: 20px;
-        }
-
-        .card h2 {
-            margin-top: 0;
-            color: #333;
         }
 
         .form-group {
@@ -148,14 +143,29 @@ mysqli_close($conn);
     </style>
 </head>
 <body>
+    <?php 
+    if($role == 2) {
+        include 'menu2.php';
+    } else {
+        include 'menu.php';
+    }
+    ?>
+ 
     <div class="container">
-        <h1>User Management</h1>
+        <h1 class="text text-light">User Management</h1>
 
-        <!-- Add User Form -->
         <div class="card">
-            <h2>Add User</h2>
+            <h2>Manage User</h2>
             <form method="POST" action="">
-                <input type="hidden" name="action" value="add">
+                <input type="hidden" name="user_id" id="user_id">
+                <div class="form-group">
+                    <label for="name">Name:</label>
+                    <input type="text" name="name" id="name" required>
+                </div>
+                <div class="form-group">
+                    <label for="surname">surname:</label>
+                    <input type="text" name="surname" id="surname" required>
+                </div>
                 <div class="form-group">
                     <label for="username">Username:</label>
                     <input type="text" name="username" id="username" required>
@@ -166,47 +176,13 @@ mysqli_close($conn);
                 </div>
                 <div class="form-group">
                     <label for="password">Password:</label>
-                    <input type="password" name="password" id="password" required>
+                    <input type="password" name="pass" id="pass">
                 </div>
-                <button type="submit">Add User</button>
+                <button type="submit">Save User</button>
+                <button type="submit" name="delete">Delete User</button>
             </form>
         </div>
 
-        <!-- Edit User Form -->
-        <div class="card">
-            <h2>Edit User</h2>
-            <form method="POST" action="">
-                <input type="hidden" name="action" value="edit">
-                <div class="form-group">
-                    <label for="user_id">User ID:</label>
-                    <input type="number" name="user_id" id="user_id" required>
-                </div>
-                <div class="form-group">
-                    <label for="username">Username:</label>
-                    <input type="text" name="username" id="username" required>
-                </div>
-                <div class="form-group">
-                    <label for="email">Email:</label>
-                    <input type="email" name="email" id="email" required>
-                </div>
-                <button type="submit">Update User</button>
-            </form>
-        </div>
-
-        <!-- Delete User Form -->
-        <div class="card">
-            <h2>Delete User</h2>
-            <form method="POST" action="">
-                <input type="hidden" name="action" value="delete">
-                <div class="form-group">
-                    <label for="user_id">User ID:</label>
-                    <input type="number" name="user_id" id="user_id" required>
-                </div>
-                <button type="submit">Delete User</button>
-            </form>
-        </div>
-
-        <!-- User List -->
         <div class="card">
             <h2>User List</h2>
             <table>
@@ -219,7 +195,7 @@ mysqli_close($conn);
                 </thead>
                 <tbody>
                     <?php foreach ($users as $user): ?>
-                        <tr>
+                        <tr onclick="editUser('<?php echo $user['id']; ?>', '<?php echo htmlspecialchars($user['username']); ?>', '<?php echo htmlspecialchars($user['email']); ?>')">
                             <td><?php echo htmlspecialchars($user['id']); ?></td>
                             <td><?php echo htmlspecialchars($user['username']); ?></td>
                             <td><?php echo htmlspecialchars($user['email']); ?></td>
@@ -229,6 +205,14 @@ mysqli_close($conn);
             </table>
         </div>
     </div>
+
+    <script>
+        function editUser(id, username, email) {
+            document.getElementById('user_id').value = id;
+            document.getElementById('username').value = username;
+            document.getElementById('email').value = email;
+        }
+    </script>
     <?php include 'js.php'; ?>
 </body>
 </html>

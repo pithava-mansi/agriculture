@@ -49,7 +49,7 @@ include 'breadcrumb.php';
                         <p>Our mission is to support farmers and deliver high-quality products to our customers.</p>
                         <p>With years of experience in the industry, we strive to offer a wide range of products that
                             meet the needs of our diverse clientele.</p>
-                        <p>Thank you for choosing us. We look forward to serving you!</p>
+                        <p>Thank you for choosing us. We look forward to serving you!</p><a href="details.php">..Read more</a> 
                     </div>
                 </div>
             </div>
